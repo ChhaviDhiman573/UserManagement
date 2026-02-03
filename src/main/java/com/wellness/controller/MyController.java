@@ -1,0 +1,158 @@
+package com.wellness.controller;
+
+import java.util.List;
+//import java.util.Optional;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.wellness.Service.JwtService;
+import com.wellness.Service.MyUserDetailsService;
+import com.wellness.Service.UserService;
+import com.wellness.data.Users;
+import com.wellness.dto.MyRequest;
+import com.wellness.dto.UpdateUser;
+import com.wellness.dto.UpdateUserAdmin;
+import com.wellness.exception.AuthenticationFailedException;
+import com.wellness.exception.UserAlreadyExistsException;
+import com.wellness.exception.UserNotFoundException;
+
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
+
+@RestController
+public class MyController {
+	
+	public static final Logger loggerobj = (Logger) LoggerFactory.getLogger(MyController.class);
+	
+	@Autowired
+	UserService userService;
+	@PostMapping("/register")
+	public ResponseEntity<String> register(@RequestBody Users user){
+		HttpStatus httpStatus= HttpStatus.OK;
+		String msg="";
+		boolean exist = userService.exists(user.getEmail());
+		if(exist) {
+			throw new UserAlreadyExistsException("User already exists!");
+		}
+		boolean result = userService.registerUser(user);
+		if(!result) {
+			throw new RuntimeException("User not registered!");
+		}
+		else {
+			msg = "User registered successfully";
+		}
+		return ResponseEntity.status(httpStatus).body(msg);
+		
+	}
+	
+	@Autowired 
+	AuthenticationManager authenticationManager;
+	@Autowired	
+	JwtService jwtService;
+	@Autowired
+	MyUserDetailsService myUserDetailsService;
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody MyRequest user) {
+		boolean exist = userService.exists(user.getEmail());
+		if(!exist) {
+			throw new UserNotFoundException("User not found!");
+		}
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken
+						(user.getEmail(), user.getPassword()));
+		UserDetails userDetails = myUserDetailsService.loadUserByUsername(user.getEmail());
+		if(authentication.isAuthenticated())
+			return ResponseEntity.status(HttpStatus.OK).body(jwtService.generateToken(userDetails));
+		else
+			throw new AuthenticationFailedException("Login failed!");
+	}
+
+	@PreAuthorize("hasRole('EMPLOYEE')")
+	@GetMapping("/viewProfile/{id}")
+	public ResponseEntity<Users> viewProfile(@PathVariable Integer id) {
+		Users myuser = userService.getProfile(id);
+		if(myuser==null) {
+			throw new UserNotFoundException("User not found!");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(myuser);
+	}
+
+	@PreAuthorize("hasRole('EMPLOYEE')")
+	@DeleteMapping("/deleteProfile/{id}")
+	public ResponseEntity<String> deleteProfile(@PathVariable int id){
+		String result = userService.deleteUser(id);
+		if(result.equalsIgnoreCase("User not found!")) {
+			throw new UserNotFoundException("User not found!");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+	
+	@PreAuthorize("hasRole('EMPLOYEE')")
+	@PutMapping("/updateProfile")
+	public ResponseEntity<String> updateProfile(@RequestBody UpdateUser user){
+		boolean updated = userService.updateUser(user);
+		if(!updated) {
+			throw new UserNotFoundException("User not found!");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body("User updated successfully!");
+	}
+	
+	@PreAuthorize("hasRole('ADMIN')")
+	@PostMapping("/addUser")
+	public ResponseEntity<String> addUser(@RequestBody Users user){
+		HttpStatus httpStatus= HttpStatus.OK;
+		String msg="";
+		boolean exist = userService.exists(user.getEmail());
+		if(exist) {
+			throw new UserAlreadyExistsException("User already exists!");
+		}
+		boolean result = userService.registerUser(user);
+		if(!result) {
+			throw new RuntimeException("User not registered!");
+		}
+		else {
+			msg = "Users registered successfully";
+		}
+		return ResponseEntity.status(httpStatus).body(msg);
+		
+	}
+	@PreAuthorize("hasRole('ADMIN')")
+	@GetMapping("/viewAllUsers")
+	public ResponseEntity<List<Users>> viewAllUsers() {
+		List<Users> users = userService.getUsers();
+		return ResponseEntity.ok().body(users);
+	}
+	@PreAuthorize("hasRole('ADMIN')")
+	@PutMapping("/updateUserAdmin")
+	public ResponseEntity<String> updateUserAdmin(@RequestBody UpdateUserAdmin user){
+		boolean updated = userService.updateUserAdmin(user);
+		if(!updated) {
+			throw new UserNotFoundException("User not found!");
+		}
+		return ResponseEntity.status(HttpStatus.OK).body("User updated successfully!");
+	}
+	@PreAuthorize("hasRole('ADMIN')")
+	@DeleteMapping("/deleteUserAdmin/{id}")
+	public ResponseEntity<String> deleteUserAdmin(@PathVariable int id){
+		String result = userService.deleteUser(id);
+		if(result.equals("User not found!")) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+}
