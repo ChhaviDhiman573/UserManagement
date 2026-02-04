@@ -1,4 +1,4 @@
-package com.wellness.Repository;
+package com.wellness.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.wellness.data.Users;

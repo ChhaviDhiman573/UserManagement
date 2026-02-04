@@ -1,10 +1,8 @@
 package com.wellness.controller;
 
 import java.util.List;
-//import java.util.Optional;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,9 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wellness.Service.JwtService;
-import com.wellness.Service.MyUserDetailsService;
-import com.wellness.Service.UserService;
 import com.wellness.data.Users;
 import com.wellness.dto.MyRequest;
 import com.wellness.dto.UpdateUser;
@@ -30,16 +25,20 @@ import com.wellness.dto.UpdateUserAdmin;
 import com.wellness.exception.AuthenticationFailedException;
 import com.wellness.exception.UserAlreadyExistsException;
 import com.wellness.exception.UserNotFoundException;
+import com.wellness.exception.UserNotRegisteredException;
+import com.wellness.service.JwtService;
+import com.wellness.service.MyUserDetailsService;
+import com.wellness.service.UserService;
 
 import ch.qos.logback.classic.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 public class MyController {
 	
 	public static final Logger loggerobj = (Logger) LoggerFactory.getLogger(MyController.class);
 	
-	@Autowired
 	UserService userService;
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody Users user){
@@ -51,7 +50,7 @@ public class MyController {
 		}
 		boolean result = userService.registerUser(user);
 		if(!result) {
-			throw new RuntimeException("User not registered!");
+			throw new UserNotRegisteredException("User not registered!");
 		}
 		else {
 			msg = "User registered successfully";
@@ -59,12 +58,9 @@ public class MyController {
 		return ResponseEntity.status(httpStatus).body(msg);
 		
 	}
-	
-	@Autowired 
+
 	AuthenticationManager authenticationManager;
-	@Autowired	
 	JwtService jwtService;
-	@Autowired
 	MyUserDetailsService myUserDetailsService;
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody MyRequest user) {
@@ -123,7 +119,7 @@ public class MyController {
 		}
 		boolean result = userService.registerUser(user);
 		if(!result) {
-			throw new RuntimeException("User not registered!");
+			throw new UserNotRegisteredException("User not registered!");
 		}
 		else {
 			msg = "Users registered successfully";

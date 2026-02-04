@@ -1,7 +1,6 @@
 package com.wellness.data;
 
 import java.util.Collection;
-//import java.util.Collections;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
@@ -13,7 +12,7 @@ import com.wellness.exception.UserNotFoundException;
 
 public class UserPrinciple implements UserDetails{
 
-	private Users user;
+	private transient Users user;
 	public UserPrinciple(Users user){
 		this.user=user;
 	}
@@ -34,8 +33,5 @@ public class UserPrinciple implements UserDetails{
 			throw new UserNotFoundException("User principal not found");
 		}
 		return user.getEmail();
-	}
-	
-	
-
+	}	
 }

@@ -1,9 +1,9 @@
 package com.wellness.mockitoTest;
 
-import com.wellness.Repository.IUserRepository;
 import com.wellness.data.Role;
 import com.wellness.data.Status;
 import com.wellness.data.Users;
+import com.wellness.repository.IUserRepository;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

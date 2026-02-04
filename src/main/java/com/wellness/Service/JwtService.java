@@ -1,16 +1,11 @@
-package com.wellness.Service;
+package com.wellness.service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-//import java.security.NoSuchAlgorithmException;
-//import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-//import javax.crypto.KeyGenerator;
-//import javax.crypto.SecretKey;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -20,13 +15,11 @@ import com.wellness.exception.AuthenticationFailedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-//import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
 	
-	//private static final String SECRET = "";
 	
 	private String secretKey;
 	

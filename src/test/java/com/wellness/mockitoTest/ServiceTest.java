@@ -1,7 +1,5 @@
 package com.wellness.mockitoTest;
 
-import com.wellness.Repository.IUserRepository;
-import com.wellness.Service.UserService;
 import com.wellness.data.Role;
 import com.wellness.data.Status;
 import com.wellness.data.Users;
@@ -9,9 +7,10 @@ import com.wellness.dto.UpdateUser;
 import com.wellness.dto.UpdateUserAdmin;
 import com.wellness.exception.UserAlreadyExistsException;
 import com.wellness.exception.UserNotFoundException;
+import com.wellness.repository.IUserRepository;
+import com.wellness.service.UserService;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

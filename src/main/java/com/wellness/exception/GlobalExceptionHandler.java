@@ -31,4 +31,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleGeneric(Exception ex){
 		return new ResponseEntity<>(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	@ExceptionHandler(UserNotRegisteredException.class)
+	public ResponseEntity<String> handleUserNotRegistered(Exception ex){
+		return new ResponseEntity<>(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 }

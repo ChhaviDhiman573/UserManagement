@@ -1,25 +1,25 @@
-package com.wellness.Service;
+package com.wellness.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.wellness.Repository.IUserRepository;
 import com.wellness.data.Users;
 import com.wellness.dto.UpdateUser;
 import com.wellness.dto.UpdateUserAdmin;
 import com.wellness.exception.UserAlreadyExistsException;
 import com.wellness.exception.UserNotFoundException;
+import com.wellness.repository.IUserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 	
-	@Autowired
 	IUserRepository userRepository;
 	
-	@Autowired
 	PasswordEncoder encoder;
 	public boolean registerUser(Users user) {
 		if(userRepository.existsByEmail(user.getEmail())) {

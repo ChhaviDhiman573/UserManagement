@@ -37,11 +37,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.wellness.Service.JwtService;
-import com.wellness.Service.MyUserDetailsService;
-import com.wellness.Service.UserService;
 import com.wellness.controller.MyController;
 import com.wellness.data.Users;
+import com.wellness.service.JwtService;
+import com.wellness.service.MyUserDetailsService;
+import com.wellness.service.UserService;
 
 /**
  * Controller tests for MyController (updated to new exception-based responses).
@@ -73,7 +73,7 @@ public class ControllerTest {
     @TestConfiguration
     static class SecurityTestConfig {
         @Bean
-        SecurityFilterChain testFilterChain(HttpSecurity http) throws Exception {
+        SecurityFilterChain testFilterChain(HttpSecurity http){
             http
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -90,7 +90,7 @@ public class ControllerTest {
         @Test
         @WithMockUser
         @DisplayName("POST /register → 200 when user not exists and registration succeeds")
-        public void register_success() {
+        void register_success() {
             try {
                 String email = "user@example.com";
                 String json = "{\"email\":\"" + email + "\",\"password\":\"pw\"}";
@@ -113,7 +113,7 @@ public class ControllerTest {
         @Test
         @WithMockUser
         @DisplayName("POST /register → 409 when user already exists (UserAlreadyExistsException)")
-        public void register_conflict_whenExists() {
+        void register_conflict_whenExists() {
             try {
                 String email = "user@example.com";
                 String json = "{\"email\":\"" + email + "\"}";
@@ -133,7 +133,7 @@ public class ControllerTest {
         @Test
         @WithMockUser
         @DisplayName("POST /register → 500 when registration fails (RuntimeException)")
-        public void register_failure_internalError() {
+        void register_failure_internalError() {
             try {
                 String email = "user@example.com";
                 String json = "{\"email\":\"" + email + "\"}";
@@ -159,7 +159,7 @@ public class ControllerTest {
 
         @Test
         @DisplayName("POST /login → 200 and JWT token when authentication succeeds")
-        public void login_success() {
+        void login_success() {
             try {
                 String email = "user@example.com";
                 String json = "{\"email\":\"" + email + "\",\"password\":\"pw\"}";
@@ -189,7 +189,7 @@ public class ControllerTest {
 
         @Test
         @DisplayName("POST /login → 404 when user not found (UserNotFoundException)")
-        public void login_userNotFound() {
+        void login_userNotFound() {
             try {
                 String email = "nouser@example.com";
                 String json = "{\"email\":\"" + email + "\",\"password\":\"x\"}";
@@ -208,7 +208,7 @@ public class ControllerTest {
 
         @Test
         @DisplayName("POST /login → 401 when authentication fails (AuthenticationFailedException)")
-        public void login_authFails() {
+        void login_authFails() {
             try {
                 String email = "user@example.com";
                 String json = "{\"email\":\"" + email + "\",\"password\":\"bad\"}";
@@ -241,7 +241,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "EMPLOYEE")
         @DisplayName("GET /viewProfile/{id} → 200 when found")
-        public void viewProfile_found() {
+        void viewProfile_found() {
             try {
                 Users u = new Users();
                 when(userService.getProfile(1)).thenReturn(u);
@@ -257,7 +257,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "EMPLOYEE")
         @DisplayName("GET /viewProfile/{id} → 404 when not found (UserNotFoundException)")
-        public void viewProfile_notFound() {
+        void viewProfile_notFound() {
             try {
                 when(userService.getProfile(999)).thenReturn(null);
 
@@ -271,7 +271,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "EMPLOYEE")
         @DisplayName("DELETE /deleteProfile/{id} → 200 when deleted")
-        public void deleteProfile_ok() {
+        void deleteProfile_ok() {
             try {
                 when(userService.deleteUser(10)).thenReturn("Profile deleted successfully!");
 
@@ -287,7 +287,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "EMPLOYEE")
         @DisplayName("DELETE /deleteProfile/{id} → 404 when user not found (UserNotFoundException)")
-        public void deleteProfile_notFound() {
+        void deleteProfile_notFound() {
             try {
                 when(userService.deleteUser(777)).thenReturn("User not found!");
 
@@ -302,7 +302,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "EMPLOYEE")
         @DisplayName("PUT /updateProfile → 200 when updated")
-        public void updateProfile_ok() {
+        void updateProfile_ok() {
             try {
                 when(userService.updateUser(org.mockito.ArgumentMatchers.any()))
                         .thenReturn(true);
@@ -323,7 +323,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "EMPLOYEE")
         @DisplayName("PUT /updateProfile → 404 when updateUser returns false (UserNotFoundException)")
-        public void updateProfile_notExists() {
+        void updateProfile_notExists() {
             try {
                 when(userService.updateUser(org.mockito.ArgumentMatchers.any()))
                         .thenReturn(false);
@@ -348,7 +348,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("POST /addUser → 200 when not exists and registered")
-        public void addUser_ok() {
+        void addUser_ok() {
             try {
                 String email = "new.admin@example.com";
                 String json = "{\"email\":\"" + email + "\",\"password\":\"pw\"}";
@@ -371,7 +371,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("POST /addUser → 409 when user already exists (UserAlreadyExistsException)")
-        public void addUser_conflict() {
+        void addUser_conflict() {
             try {
                 String email = "exist@example.com";
                 String json = "{\"email\":\"" + email + "\"}";
@@ -391,7 +391,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("POST /addUser → 500 when registration fails (RuntimeException)")
-        public void addUser_fail() {
+        void addUser_fail() {
             try {
                 String email = "fail@example.com";
                 String json = "{\"email\":\"" + email + "\"}";
@@ -413,7 +413,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("GET /viewAllUsers → 200 with list")
-        public void viewAllUsers_ok() {
+        void viewAllUsers_ok() {
             try {
                 when(userService.getUsers()).thenReturn(Arrays.asList(new Users(), new Users()));
 
@@ -431,7 +431,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("GET /viewAllUsers → 200 with empty list")
-        public void viewAllUsers_empty() {
+        void viewAllUsers_empty() {
             try {
                 when(userService.getUsers()).thenReturn(Collections.emptyList());
 
@@ -448,7 +448,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("PUT /updateUserAdmin → 200 when updated")
-        public void updateUserAdmin_ok() {
+        void updateUserAdmin_ok() {
             try {
                 when(userService.updateUserAdmin(org.mockito.ArgumentMatchers.any()))
                         .thenReturn(true);
@@ -469,7 +469,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("PUT /updateUserAdmin → 404 when updateUserAdmin returns false (UserNotFoundException)")
-        public void updateUserAdmin_notExistsOrFail() {
+        void updateUserAdmin_notExistsOrFail() {
             try {
                 when(userService.updateUserAdmin(org.mockito.ArgumentMatchers.any()))
                         .thenReturn(false);
@@ -489,7 +489,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("DELETE /deleteUserAdmin/{id} → 200 when deleted")
-        public void deleteUserAdmin_ok() {
+        void deleteUserAdmin_ok() {
             try {
                 when(userService.deleteUser(55)).thenReturn("Profile deleted successfully!");
 
@@ -505,7 +505,7 @@ public class ControllerTest {
         @Test
         @WithMockUser(roles = "ADMIN")
         @DisplayName("DELETE /deleteUserAdmin/{id} → 404 when user not found (controller returns 404 body)")
-        public void deleteUserAdmin_notFound() {
+        void deleteUserAdmin_notFound() {
             try {
                 when(userService.deleteUser(404)).thenReturn("User not found!");
 
