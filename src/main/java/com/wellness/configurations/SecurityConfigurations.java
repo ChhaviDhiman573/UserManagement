@@ -27,7 +27,7 @@ public class SecurityConfigurations {
 		return new BCryptPasswordEncoder();
 	}
 	
-	JwtFilters jwtFilter;
+	private final JwtFilters jwtFilter;
 	@Bean
 	public SecurityFilterChain springFilterChain(HttpSecurity http) {
 		http.csrf(c->c.disable()

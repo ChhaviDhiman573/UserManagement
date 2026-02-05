@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService{
-	IUserRepository userRepo;
+	private final IUserRepository userRepo;
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Users user = userRepo.findByEmail(email);

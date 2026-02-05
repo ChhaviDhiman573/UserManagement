@@ -23,8 +23,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtFilters extends OncePerRequestFilter{
-	JwtService jwtService;
-	ApplicationContext context;
+	private final JwtService jwtService;
+	private final ApplicationContext context;
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {

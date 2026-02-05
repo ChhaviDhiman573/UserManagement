@@ -96,7 +96,7 @@ class RepositoryTest {
         ));
 
         Optional<Users> found = repository.findById(saved.getUserId());
-        Optional<Users> notFound = repository.findById(-999);
+        Optional<Users> notFound = repository.findById((long) -999);
 
         assertThat(found).isPresent();
         assertThat(found.get().getEmail()).isEqualTo("bob@example.com");

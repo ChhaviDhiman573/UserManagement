@@ -39,7 +39,7 @@ public class MyController {
 	
 	public static final Logger loggerobj = (Logger) LoggerFactory.getLogger(MyController.class);
 	
-	UserService userService;
+	private final UserService userService;
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody Users user){
 		HttpStatus httpStatus= HttpStatus.OK;
@@ -59,9 +59,9 @@ public class MyController {
 		
 	}
 
-	AuthenticationManager authenticationManager;
-	JwtService jwtService;
-	MyUserDetailsService myUserDetailsService;
+	private final AuthenticationManager authenticationManager;
+	private final JwtService jwtService;
+	private final MyUserDetailsService myUserDetailsService;
 	@PostMapping("/login")
 	public ResponseEntity<String> login(@RequestBody MyRequest user) {
 		boolean exist = userService.exists(user.getEmail());
@@ -80,7 +80,7 @@ public class MyController {
 
 	@PreAuthorize("hasRole('EMPLOYEE')")
 	@GetMapping("/viewProfile/{id}")
-	public ResponseEntity<Users> viewProfile(@PathVariable Integer id) {
+	public ResponseEntity<Users> viewProfile(@PathVariable Long id) {
 		Users myuser = userService.getProfile(id);
 		if(myuser==null) {
 			throw new UserNotFoundException("User not found!");
@@ -90,7 +90,7 @@ public class MyController {
 
 	@PreAuthorize("hasRole('EMPLOYEE')")
 	@DeleteMapping("/deleteProfile/{id}")
-	public ResponseEntity<String> deleteProfile(@PathVariable int id){
+	public ResponseEntity<String> deleteProfile(@PathVariable Long id){
 		String result = userService.deleteUser(id);
 		if(result.equalsIgnoreCase("User not found!")) {
 			throw new UserNotFoundException("User not found!");
@@ -144,7 +144,7 @@ public class MyController {
 	}
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/deleteUserAdmin/{id}")
-	public ResponseEntity<String> deleteUserAdmin(@PathVariable int id){
+	public ResponseEntity<String> deleteUserAdmin(@PathVariable Long id){
 		String result = userService.deleteUser(id);
 		if(result.equals("User not found!")) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);

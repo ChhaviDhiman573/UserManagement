@@ -18,9 +18,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	
-	IUserRepository userRepository;
+	private final IUserRepository userRepository;
 	
-	PasswordEncoder encoder;
+	private final PasswordEncoder encoder;
 	public boolean registerUser(Users user) {
 		if(userRepository.existsByEmail(user.getEmail())) {
 			throw new UserAlreadyExistsException("User already exists");
@@ -28,17 +28,17 @@ public class UserService {
 		user.setPassword(encoder.encode(user.getPassword()));
 		return userRepository.save(user) != null;
 	}
-	public Users getProfile(Integer id) {
-		Users profile = userRepository.findById(id).orElse(null);
+	public Users getProfile(Long i) {
+		Users profile = userRepository.findById(i).orElse(null);
 		if(profile==null) {
 			throw new UserNotFoundException("User not found");
 		}
-		return userRepository.findById(id).orElse(null);
+		return userRepository.findById(i).orElse(null);
 	}
 	public List<Users> getUsers(){
 		return userRepository.findAll();
 	}
-	public String deleteUser(int id) {
+	public String deleteUser(long id) {
 		Users user = userRepository.findById(id).orElse(null);
 		if(user==null) {
 			return "User not found!";

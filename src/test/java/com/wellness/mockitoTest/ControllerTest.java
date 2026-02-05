@@ -244,7 +244,7 @@ public class ControllerTest {
         void viewProfile_found() {
             try {
                 Users u = new Users();
-                when(userService.getProfile(1)).thenReturn(u);
+                when(userService.getProfile((long)1)).thenReturn(u);
 
                 mockMvc.perform(get("/viewProfile/{id}", 1))
                        .andExpect(status().isOk())
@@ -259,7 +259,7 @@ public class ControllerTest {
         @DisplayName("GET /viewProfile/{id} → 404 when not found (UserNotFoundException)")
         void viewProfile_notFound() {
             try {
-                when(userService.getProfile(999)).thenReturn(null);
+                when(userService.getProfile((long)999)).thenReturn(null);
 
                 mockMvc.perform(get("/viewProfile/{id}", 999))
                        .andExpect(status().isNotFound());

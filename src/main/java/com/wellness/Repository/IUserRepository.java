@@ -3,7 +3,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.wellness.data.Users;
 
-public interface IUserRepository extends JpaRepository<Users, Integer>{
+public interface IUserRepository extends JpaRepository<Users, Long>{
 	Users findByEmail(String email);
 	boolean existsByEmail(String email);
 }

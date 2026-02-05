@@ -102,9 +102,9 @@ class ServiceTest {
     @DisplayName("getProfile → returns entity when found")
     void getProfile_found() {
         Users entity = new Users();
-        when(userRepository.findById(1)).thenReturn(Optional.of(entity));
+        when(userRepository.findById((long) 1)).thenReturn(Optional.of(entity));
 
-        Users result = userService.getProfile(1);
+        Users result = userService.getProfile((long)1);
 
         assertThat(result).isSameAs(entity);
     }
@@ -112,9 +112,9 @@ class ServiceTest {
     @Test
     @DisplayName("getProfile → throws UserNotFoundException when not found")
     void getProfile_notFound() {
-        when(userRepository.findById(999)).thenReturn(Optional.empty());
+        when(userRepository.findById((long) 999)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.getProfile(999));
+        assertThrows(UserNotFoundException.class, () -> userService.getProfile((long) 999));
     }
 
     // ---------------- getUsers ----------------
@@ -135,24 +135,24 @@ class ServiceTest {
     @Test
     @DisplayName("deleteUser → 'User not found!' when id absent")
     void deleteUser_notFound() {
-        when(userRepository.findById(111)).thenReturn(Optional.empty());
+        when(userRepository.findById((long) 111)).thenReturn(Optional.empty());
 
         String result = userService.deleteUser(111);
 
         assertThat(result).isEqualTo("User not found!");
-        verify(userRepository, never()).deleteById(anyInt());
+        verify(userRepository, never()).deleteById((long) anyInt());
     }
 
     @Test
     @DisplayName("deleteUser → deletes and returns success message when id present")
     void deleteUser_ok() {
         Users existing = new Users();
-        when(userRepository.findById(10)).thenReturn(Optional.of(existing));
+        when(userRepository.findById((long) 10)).thenReturn(Optional.of(existing));
 
         String result = userService.deleteUser(10);
 
         assertThat(result).isEqualTo("Profile deleted successfully!");
-        verify(userRepository).deleteById(10);
+        verify(userRepository).deleteById((long) 10);
     }
 
     // ---------------- exists ----------------
